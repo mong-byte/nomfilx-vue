@@ -6,7 +6,7 @@ import {
   LANGUAGE_CONFIG,
   MOVIEURL,
   TVURL,
-} from "./constants";
+} from "@/utils/constants";
 
 const api = axios.create({
   baseURL: BASE_URL,

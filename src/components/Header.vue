@@ -8,23 +8,23 @@
             { path_active: currentPath.path === home },
             $style.header_link,
           ]"
-          >home</router-link
+          >Movies</router-link
         >
       </li>
-      <li>
+      <!-- <li>
         <router-link
           :to="tv"
           :class="[{ active: currentPath.path === tv }, $style.header_link]"
           >tv</router-link
         >
-      </li>
+      </li> -->
     </ul>
   </header>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
-import { ROUTES } from "../utils/constants";
+import { ROUTES } from "@/utils/constants";
 
 export default defineComponent({
   name: "Header",
