@@ -9,7 +9,7 @@
           :imageUrl="movie.poster_path"
           :title="movie.original_title"
           :rating="movie.vote_average"
-          :year="movie.release_date"
+          :year="movie.release_date.substring(0, 4)"
           :isMovie="true"
         />
       </template>
@@ -23,7 +23,7 @@
           :imageUrl="movie.poster_path"
           :title="movie.original_title"
           :rating="movie.vote_average"
-          :year="movie.release_date"
+          :year="movie.release_date.substring(0, 4)"
           :isMovie="true"
         />
       </template>
@@ -37,7 +37,7 @@
           :imageUrl="movie.poster_path"
           :title="movie.original_title"
           :rating="movie.vote_average"
-          :year="movie.release_date"
+          :year="movie.release_date.substring(0, 4)"
           :isMovie="true"
         />
       </template>

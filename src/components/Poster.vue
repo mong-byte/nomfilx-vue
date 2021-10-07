@@ -15,7 +15,7 @@
   </router-link>
 </template>
 
-<script>
+<script lang="ts">
 import { IMAGE_URL } from "@/utils/constants";
 import { defineComponent } from "@vue/runtime-core";
 
@@ -23,7 +23,7 @@ export default defineComponent({
   name: "Poster",
   data() {
     return {
-      imgSrc: `${IMAGE_URL}${this.imageUrl}`,
+      imgSrc: `${IMAGE_URL}${this.imageUrl}` as string,
     };
   },
   props: {
