@@ -23,6 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "@/views/Detail.vue"),
+    props: castRouteParams,
   },
   {
     path: "/show/:id",
@@ -32,6 +33,7 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "@/views/Detail.vue"),
+    props: castRouteParams,
   },
 ];
 
@@ -39,5 +41,11 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+function castRouteParams(route: { params: { id: string } }) {
+  return {
+    id: route.params.id,
+  };
+}
 
 export default router;
