@@ -14,6 +14,16 @@
       >
         <router-link :to="tv" :class="$style.header_link">TV</router-link>
       </li>
+      <li
+        :class="[
+          $style.header_item,
+          { path_active: currentPath.path === search },
+        ]"
+      >
+        <router-link :to="search" :class="$style.header_link"
+          >Search</router-link
+        >
+      </li>
     </ul>
   </header>
 </template>
@@ -31,6 +41,7 @@ export default defineComponent({
         .currentRoute as Ref<RouteLocationNormalizedLoaded>,
       home: ROUTES.home as string,
       tv: ROUTES.tv as string,
+      search: ROUTES.search as string,
     };
   },
 });

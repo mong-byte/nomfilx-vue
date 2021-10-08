@@ -7,7 +7,7 @@
 <style lang="less" module>
 .loader_container {
   height: 100vh;
-  width: 100vw;
+  width: 90vw;
   display: flex;
   justify-content: center;
   font-size: 28px;
