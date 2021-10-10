@@ -9,10 +9,10 @@
       />
     </form>
     <Loader v-if="loading" />
-    <Section title="Movie Result" v-if="seachResult.movieResults && !loading">
+    <Section title="Movie Result" v-if="searchResult.movieResults && !loading">
       <template v-slot:contents>
         <Poster
-          v-for="movie in seachResult.movieResults"
+          v-for="movie in searchResult.movieResults"
           :key="movie.id"
           :id="movie.id"
           :imageUrl="movie.poster_path"
@@ -23,10 +23,10 @@
         />
       </template>
     </Section>
-    <Section title="TV Result" v-if="seachResult.tvResults && !loading">
+    <Section title="TV Result" v-if="searchResult.tvResults && !loading">
       <template v-slot:contents>
         <Poster
-          v-for="show in seachResult.tvResults"
+          v-for="show in searchResult.tvResults"
           :key="show.id"
           :id="show.id"
           :imageUrl="show.poster_path"
@@ -44,7 +44,7 @@
 import { moviesApi, tvapi } from "@/utils/api";
 import { HomeTypes } from "@/utils/types/HomeTypes";
 import { TvDataTypes } from "@/utils/types/TvTypes";
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, reactive, toRefs, watch } from "vue";
 import { SearchStateTypes } from "@/utils/types/SearchDataTypes";
 import Section from "@/components/Section.vue";
 import Poster from "@/components/Poster.vue";
@@ -52,31 +52,21 @@ import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "Search",
-  data() {
-    return {
-      seachResult: {
+  setup() {
+    const state = reactive({
+      searchResult: {
         movieResults: null,
         tvResults: null,
       } as SearchStateTypes,
       term: "" as string,
       error: null as null | string,
       loading: false as boolean,
-    };
-  },
-  methods: {
-    preSearchCheck(event: Event) {
-      event.preventDefault();
-      if (this.term) {
-        this.fetchSearchData(this.term);
-        this.term = "";
-      }
-    },
-    updateTerm(event: Event) {
-      const target = event.target as HTMLInputElement;
-      this.term = target.value;
-    },
-    async fetchSearchData(term: string) {
-      this.loading = true;
+    });
+
+    const { searchResult, term, error, loading } = toRefs(state);
+
+    const fetchSearchData = async (term: string) => {
+      loading.value = true;
       try {
         const {
           data: { results: movieResults },
@@ -84,18 +74,38 @@ export default defineComponent({
         const {
           data: { results: tvResults },
         }: { data: { results: TvDataTypes[] } } = await tvapi.search(term);
-        this.seachResult = { movieResults, tvResults };
+        searchResult.value = { movieResults, tvResults };
       } catch {
-        this.error = "Can't find results.";
-        console.log(this.error);
+        error.value = "Can't find results.";
       } finally {
-        const { movieResults, tvResults } = this.seachResult;
+        const { movieResults, tvResults } = toRefs(state.searchResult);
         if (movieResults || tvResults) {
-          this.loading = false;
+          loading.value = false;
         }
       }
-    },
+    };
+
+    const preSearchCheck = (event: Event) => {
+      event.preventDefault();
+      if (term) {
+        fetchSearchData(term.value);
+        term.value = "";
+      }
+    };
+
+    const updateTerm = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      term.value = target.value;
+    };
+
+    watch(
+      () => state.error,
+      () => alert(state.error)
+    );
+
+    return { searchResult, term, error, loading, preSearchCheck, updateTerm };
   },
+
   components: {
     Section,
     Poster,

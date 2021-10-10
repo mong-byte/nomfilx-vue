@@ -47,58 +47,63 @@
 import { moviesApi, tvapi } from "@/utils/api";
 import { BG_IMAGE_PATH, ROUTES } from "@/utils/constants";
 import { ResultType } from "@/utils/types/DetailTyps";
-import { defineComponent, Ref } from "@vue/runtime-core";
+import { computed, defineComponent, onMounted, reactive, toRefs } from "vue";
 import { AxiosResponse } from "axios";
-import { NavigationFailure, RouteLocationNormalizedLoaded } from "vue-router";
+import { NavigationFailure, useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "Detail",
-  data() {
-    return {
-      result: null as null | ResultType,
-      error: null as null | string,
-      loading: true as boolean,
-      currentPath: this.$router
-        .currentRoute as Ref<RouteLocationNormalizedLoaded>,
-      baseImgPath: BG_IMAGE_PATH as string,
-    };
-  },
-  methods: {
-    async fetchDetail() {
-      const detailId = Number(this.id);
-      try {
-        const isMovie = this.currentPath.path.includes(ROUTES.movie);
-        if (isMovie) {
-          const { data }: AxiosResponse<ResultType> =
-            await moviesApi.movieDetail(detailId);
-          this.result = data;
-        } else {
-          const { data }: AxiosResponse<ResultType> = await tvapi.showDetail(
-            detailId
-          );
-          this.result = data;
-        }
-      } catch {
-        this.error = "Can't find a result.";
-        console.log(this.error);
-      } finally {
-        if (this.result) {
-          this.loading = false;
-        }
-      }
-    },
-    preFetchCheck(
-      paramId: string | undefined
-    ): Promise<void | NavigationFailure | undefined> | undefined {
-      if (isNaN(Number(paramId))) return this.$router.push(ROUTES.home);
-      return this.fetchDetail();
-    },
-  },
   props: {
     id: String,
   },
-  created() {
-    this.preFetchCheck(this.id);
+
+  setup(props) {
+    const route = useRoute();
+    const router = useRouter();
+    const path = computed(() => route.path).value;
+    const detailId = Number(props.id);
+
+    const state = reactive({
+      result: null as null | ResultType,
+      error: null as null | string,
+      loading: true as boolean,
+      baseImgPath: BG_IMAGE_PATH as string,
+    });
+    const { result, error, loading, baseImgPath } = toRefs(state);
+
+    const fetchDetail = async (id: number): Promise<void> => {
+      try {
+        const isMovie = path.includes(ROUTES.movie);
+
+        if (isMovie) {
+          const { data }: AxiosResponse<ResultType> =
+            await moviesApi.movieDetail(id);
+          result.value = data;
+        } else {
+          const { data }: AxiosResponse<ResultType> = await tvapi.showDetail(
+            id
+          );
+          result.value = data;
+        }
+      } catch {
+        error.value = "Can't find a result.";
+      } finally {
+        if (result) {
+          loading.value = false;
+        }
+      }
+    };
+    const preFetchDetail = (
+      id: number
+    ): Promise<void | NavigationFailure | undefined> => {
+      if (isNaN(id)) return router.push(ROUTES.home);
+      return fetchDetail(id);
+    };
+
+    onMounted(() => {
+      preFetchDetail(detailId);
+    });
+    return { result, error, loading, baseImgPath };
   },
 });
 </script>

@@ -17,15 +17,10 @@
 
 <script lang="ts">
 import { IMAGE_URL } from "@/utils/constants";
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Poster",
-  data() {
-    return {
-      imgSrc: `${IMAGE_URL}${this.imageUrl}` as string,
-    };
-  },
   props: {
     id: Number,
     imageUrl: String,
@@ -33,6 +28,10 @@ export default defineComponent({
     rating: Number,
     year: String,
     isMovie: Boolean,
+  },
+  setup(props) {
+    const imgSrc = `${IMAGE_URL}${props.imageUrl}` as string;
+    return { imgSrc };
   },
 });
 </script>

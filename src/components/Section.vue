@@ -5,8 +5,8 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from "@vue/runtime-core";
+<script lang="ts">
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Section",

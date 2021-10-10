@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, reactive, toRefs, watch } from "vue";
 import { HomeTypes, movieTypes } from "@/utils/types/HomeTypes";
 import { moviesApi } from "@/utils/api";
 import Section from "@/components/Section.vue";
@@ -56,8 +56,9 @@ import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "Home",
-  data() {
-    return {
+
+  setup() {
+    const state = reactive({
       movieData: {
         nowPlaying: null,
         upcoming: null,
@@ -65,10 +66,11 @@ export default defineComponent({
       } as movieTypes,
       error: null as null | string,
       loading: true as boolean,
-    };
-  },
-  methods: {
-    async fetchMovieData() {
+    });
+
+    const { movieData, error, loading } = toRefs(state);
+
+    const fetchMovieData = async () => {
       try {
         const {
           data: { results: nowPlaying },
@@ -79,24 +81,27 @@ export default defineComponent({
         const {
           data: { results: popular },
         }: { data: { results: HomeTypes[] } } = await moviesApi.popular();
-        this.movieData = { nowPlaying, upcoming, popular };
+        movieData.value = { nowPlaying, upcoming, popular };
       } catch {
-        this.error = "Can't find movies information.";
+        error.value = "Can't find movies information.";
       } finally {
-        const { nowPlaying, upcoming, popular } = this.movieData;
+        const { nowPlaying, upcoming, popular } = toRefs(state.movieData);
         if (nowPlaying && upcoming && popular) {
-          this.loading = false;
+          loading.value = false;
         }
       }
-    },
-  },
-  async created() {
-    await this.fetchMovieData();
-  },
-  watch: {
-    error() {
-      alert(this.error);
-    },
+    };
+
+    onMounted(() => {
+      fetchMovieData();
+    });
+
+    watch(
+      () => state.error,
+      () => alert(state.error)
+    );
+
+    return { movieData, error, loading };
   },
   components: {
     Section,

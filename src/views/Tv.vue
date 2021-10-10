@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, onMounted, reactive, toRefs, watch } from "vue";
 import { tvapi } from "@/utils/api";
 import { TvDataTypes, TvStateTypes } from "@/utils/types/TvTypes";
 import Section from "@/components/Section.vue";
@@ -56,8 +56,8 @@ import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "TV",
-  data() {
-    return {
+  setup() {
+    const state = reactive({
       tvData: {
         topRated: null,
         popular: null,
@@ -65,10 +65,11 @@ export default defineComponent({
       } as TvStateTypes,
       error: null as null | string,
       loading: true as boolean,
-    };
-  },
-  methods: {
-    async fetchTvData() {
+    });
+
+    const { tvData, error, loading } = toRefs(state);
+
+    const fetchTvData = async () => {
       try {
         const {
           data: { results: topRated },
@@ -79,24 +80,27 @@ export default defineComponent({
         const {
           data: { results: airingToday },
         }: { data: { results: TvDataTypes[] } } = await tvapi.airingToday();
-        this.tvData = { topRated, popular, airingToday };
+        tvData.value = { topRated, popular, airingToday };
       } catch {
-        this.error = "Can't find movies information.";
+        error.value = "Can't find movies information.";
       } finally {
-        const { topRated, popular, airingToday } = this.tvData;
+        const { topRated, popular, airingToday } = toRefs(state.tvData);
         if (topRated && popular && airingToday) {
-          this.loading = false;
+          loading.value = false;
         }
       }
-    },
-  },
-  async created() {
-    await this.fetchTvData();
-  },
-  watch: {
-    error() {
-      alert(this.error);
-    },
+    };
+
+    onMounted(() => {
+      fetchTvData();
+    });
+
+    watch(
+      () => state.error,
+      () => alert(state.error)
+    );
+
+    return { tvData, error, loading };
   },
   components: {
     Section,

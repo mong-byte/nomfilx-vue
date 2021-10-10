@@ -1,25 +1,13 @@
 <template>
   <header :class="$style.header_container">
     <ul>
-      <li
-        :class="[
-          $style.header_item,
-          { path_active: currentPath.path === home },
-        ]"
-      >
+      <li :class="[$style.header_item, { path_active: path === home }]">
         <router-link :to="home" :class="$style.header_link">Movies</router-link>
       </li>
-      <li
-        :class="[$style.header_item, { path_active: currentPath.path === tv }]"
-      >
+      <li :class="[$style.header_item, { path_active: path === tv }]">
         <router-link :to="tv" :class="$style.header_link">TV</router-link>
       </li>
-      <li
-        :class="[
-          $style.header_item,
-          { path_active: currentPath.path === search },
-        ]"
-      >
+      <li :class="[$style.header_item, { path_active: path === search }]">
         <router-link :to="search" :class="$style.header_link"
           >Search</router-link
         >
@@ -29,20 +17,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref } from "@vue/runtime-core";
+import { computed, defineComponent } from "vue";
 import { ROUTES } from "@/utils/constants";
-import { RouteLocationNormalizedLoaded } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "Header",
-  data() {
-    return {
-      currentPath: this.$router
-        .currentRoute as Ref<RouteLocationNormalizedLoaded>,
+  setup() {
+    const route = useRoute();
+    const path = computed(() => route.path);
+
+    const state = {
       home: ROUTES.home as string,
       tv: ROUTES.tv as string,
       search: ROUTES.search as string,
     };
+    return { path, ...state };
   },
 });
 </script>
