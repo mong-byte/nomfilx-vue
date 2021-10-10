@@ -65,7 +65,7 @@ export default defineComponent({
 
     const { searchResult, term, error, loading } = toRefs(state);
 
-    const fetchSearchData = async (term: string) => {
+    const fetchSearchData = async (term: string): Promise<void> => {
       loading.value = true;
       try {
         const {
@@ -85,7 +85,7 @@ export default defineComponent({
       }
     };
 
-    const preSearchCheck = (event: Event) => {
+    const preSearchCheck = (event: Event): void => {
       event.preventDefault();
       if (term) {
         fetchSearchData(term.value);
@@ -93,7 +93,7 @@ export default defineComponent({
       }
     };
 
-    const updateTerm = (event: Event) => {
+    const updateTerm = (event: Event): void => {
       const target = event.target as HTMLInputElement;
       term.value = target.value;
     };

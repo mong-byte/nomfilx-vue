@@ -69,7 +69,7 @@ export default defineComponent({
 
     const { tvData, error, loading } = toRefs(state);
 
-    const fetchTvData = async () => {
+    const fetchTvData = async (): Promise<void> => {
       try {
         const {
           data: { results: topRated },

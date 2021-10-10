@@ -70,7 +70,7 @@ export default defineComponent({
 
     const { movieData, error, loading } = toRefs(state);
 
-    const fetchMovieData = async () => {
+    const fetchMovieData = async (): Promise<void> => {
       try {
         const {
           data: { results: nowPlaying },
