@@ -14,30 +14,37 @@
         }"
       />
       <div :class="$style.detail_data">
-        <h3 :class="$style.detail_title">
-          {{
-            result.original_title ? result.original_title : result.original_name
-          }}
-        </h3>
-        <div :class="$style.detail_box">
-          <span>{{
-            result.release_date
-              ? result.release_date.substring(0, 4)
-              : result.first_air_date.substring(0, 4)
-          }}</span>
-          <span :class="$style.divider">·</span>
-          <span
-            >{{
-              result.runtime ? result.runtime : result.episode_run_time[0]
+        <div>
+          <h3 :class="$style.detail_title">
+            {{
+              result.original_title
+                ? result.original_title
+                : result.original_name
             }}
-            min</span
-          >
-          <span :class="$style.divider">·</span>
-          <span v-for="(genre, index) in result.genres" :key="genre.id">{{
-            index === result.genres.length - 1 ? genre.name : `${genre.name} / `
-          }}</span>
+          </h3>
+          <div :class="$style.detail_box">
+            <span>{{
+              result.release_date
+                ? result.release_date.substring(0, 4)
+                : result.first_air_date.substring(0, 4)
+            }}</span>
+            <span :class="$style.divider">·</span>
+            <span
+              >{{
+                result.runtime ? result.runtime : result.episode_run_time[0]
+              }}
+              min</span
+            >
+            <span :class="$style.divider">·</span>
+            <span v-for="(genre, index) in result.genres" :key="genre.id">{{
+              index === result.genres.length - 1
+                ? genre.name
+                : `${genre.name} / `
+            }}</span>
+          </div>
+          <p :class="$style.detail_description">{{ result.overview }}</p>
         </div>
-        <p :class="$style.detail_description">{{ result.overview }}</p>
+        <Tabs :result="{ ...result }" />
       </div>
     </div>
   </div>
@@ -50,6 +57,7 @@ import { ResultType } from "@/utils/types/DetailTyps";
 import { computed, defineComponent, onMounted, reactive, toRefs } from "vue";
 import { AxiosResponse } from "axios";
 import { NavigationFailure, useRoute, useRouter } from "vue-router";
+import Tabs from "@/components/Tabs.vue";
 
 export default defineComponent({
   name: "Detail",
@@ -93,6 +101,7 @@ export default defineComponent({
         }
       }
     };
+
     const preFetchDetail = (
       id: number
     ): Promise<void | NavigationFailure | undefined> => {
@@ -104,6 +113,9 @@ export default defineComponent({
       preFetchDetail(detailId);
     });
     return { result, error, loading, baseImgPath };
+  },
+  components: {
+    Tabs,
   },
 });
 </script>
@@ -144,6 +156,10 @@ export default defineComponent({
     }
 
     .detail_data {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-direction: column;
       width: 70%;
       margin-left: 10px;
 
