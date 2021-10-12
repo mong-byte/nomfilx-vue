@@ -125,7 +125,7 @@ export default defineComponent({
   height: calc(100vh - 50px);
   width: 100%;
   position: relative;
-  padding: 50px;
+  padding: 20px;
 
   .back_drop {
     position: absolute;
@@ -141,12 +141,13 @@ export default defineComponent({
   }
 
   .detail_contents {
+    position: relative;
     display: flex;
     width: 100%;
-    position: relative;
-    z-index: 1;
     height: 100%;
     border-radius: 5px;
+    z-index: 1;
+    overflow: hidden;
 
     .poster {
       width: 30%;

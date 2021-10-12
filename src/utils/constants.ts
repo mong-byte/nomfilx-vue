@@ -10,6 +10,7 @@ export const API_KEYS = "22fe675e6b150687017596a5b2301c77";
 export const LANGUAGE_CONFIG = "en-US";
 export const BG_IMAGE_PATH = "http://image.tmdb.org/t/p/original";
 export const IMAGE_URL = "http://image.tmdb.org/t/p/w300";
+export const VIDEO_URL = "http://youtube.com/embed/";
 
 export const CATEGORY: CategoryTypes = {
   movie: "movie",
